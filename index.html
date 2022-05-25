@@ -6,11 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/main.css">
-    <title>Sprint 0</title>
+    <title>MineSweeper</title>
 </head>
 
-<body onload="init()">
+<body onload="initGame()">
+    <div class = 'victory' style="color: red; height: 100px; display:none">Victory</div>
+    <div class = 'gameOver' style="color: red; border: 2px  black solid; height: 100px; display:none">Game Over</div>
+    <table>
+        <tbody class="minesField"></tbody>
+    </table>
     <script src="js/main.js"></script>
+    <script src="js/board.js"></script>
     <script src="js/utils.js"></script>
 </body>
 </html>

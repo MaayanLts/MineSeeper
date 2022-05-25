@@ -1,0 +1,39 @@
+* {
+    box-sizing: border-box;
+}
+
+.minesField{
+    position: absolute;
+    margin-top: 100px;
+    margin-left: 650px;
+    border: 2px red solid;
+}
+
+.cell{
+    height: 50px;
+    width: 50px;
+    border: 2px blue solid;
+    background-color: blue;
+}
+
+.cell.shown{
+    border: 1px rgb(194, 214, 240) solid;
+    background-color: rgb(194, 214, 240);
+}
+
+.cell.marked{
+    border: 1px rgb(5, 167, 59) solid;
+    background-color: rgb(5, 167, 59);
+}
+
+.cell.shown.mine{
+    border: 1px red solid;
+    background-color: red;
+}
+
+.cell.shown.exploded{
+    border: 5px black solid;
+    background-color: rgb(248, 9, 9);
+}
+
+
