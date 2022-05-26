@@ -10,13 +10,32 @@
 </head>
 
 <body onload="initGame()">
-    <div class = 'victory' style="color: red; height: 100px; display:none">Victory</div>
-    <div class = 'gameOver' style="color: red; border: 2px  black solid; height: 100px; display:none">Game Over</div>
-    <table>
-        <tbody class="minesField"></tbody>
-    </table>
+    <div class='background'>
+        <div class='solderPanel'><img class='solder' src='img/solderBeginner.png' style='width: 200px;' /></div>
+        <div class="buttonsPanel">
+            <button class = 'gameLevels' onclick="changeGameLevel(4,2)">Beginner</button>
+            <button class = 'gameLevels' onclick="changeGameLevel(8,12)">Intermediate</button>
+            <button class = 'gameLevels' onclick="changeGameLevel(12,30)">Expert</button>
+        </div>
+        <div class="lifePanel">
+            <img class="heart life" src='../img/heartLife.png' />
+            <img class="heart life" src='../img/heartLife.png' />
+            <img class="heart life" src='../img/heartLife.png' />
+            <img class="emoji" emoji-level="0" src='../img/emjStartGame.png' onclick="restartGame()" />
+        </div>
+        <table>
+            <tbody class="minesField"></tbody>
+        </table>
+        <div class="hintsPanel" style="display:none">
+            <button class="hint" onclick="hint()"></button>
+            <button class="hint" onclick="hint()"> </button>
+            <button class="hint" onclick="hint()"></button>
+        </div>
+        <h3>© Copyright, Maayan Loutset</h3>
+    </div>
     <script src="js/main.js"></script>
     <script src="js/board.js"></script>
     <script src="js/utils.js"></script>
 </body>
+
 </html>

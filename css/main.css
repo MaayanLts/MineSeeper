@@ -1,39 +1,140 @@
 * {
+    position: relative;
     box-sizing: border-box;
 }
 
-.minesField{
+.background {
     position: absolute;
-    margin-top: 100px;
-    margin-left: 650px;
-    border: 2px red solid;
+    display: block;
+    height: 810px;
+    width: 100%;
+    background-image: url(../img/worldOver.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position-y: center;
+    align-items: baseline;
 }
 
-.cell{
-    height: 50px;
+h3 {
+    margin-top: 15px;
+    margin-left: 430px;
+    color: rgb(206, 157, 23);
+    font-size: 25px;
+    font-weight: bold;
+}
+
+h3:hover{
+    font-size: 30px;
+}
+
+.hint{
+   /* display: flex;
+    position: fixed;*/
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-top: 18px;
+    background-color: grey;
+    border-color: black solid;
+    border-width: 8px;
+}
+
+.hint.inUse{
+    margin: 10px;
+    background-color: yellow;
+}
+
+.hint.used{
+    margin: 10px;
+    background-color: black;
+}
+
+.lifePanel{
+    position: absolute;
+    display: flex;
+    margin-left: 430px;
+    margin-top: -29px; /*????????*/
+    /*border:#353830 solid 2px;*/
+    width: 495px;
+    height: 60px;
+    position: relative;
+}
+
+.hintsPanel{
+    display: grid;
+    margin-left: 370px;
+    margin-top: -250px;
+}
+
+.heart{
+    width: 40px;
+    height: 35px;
+    margin-left: 5px;
+    margin-top: 12px;
+}
+
+.emoji{
     width: 50px;
-    border: 2px blue solid;
-    background-color: blue;
+    height: 50px;
+    margin-left: 80px;
+    margin-top: 5px;
+    cursor: pointer;
 }
 
-.cell.shown{
-    border: 1px rgb(194, 214, 240) solid;
-    background-color: rgb(194, 214, 240);
+.solderPanel{
+    position:absolute;
+    display: grid;
+    margin-left: 50px;
+    margin-top: 40px;
 }
 
-.cell.marked{
+.gameLevels{
+    text-align: center;
+    font-size: medium;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: rgb(141 67 72);
+    width: 120px;
+    height: 30px;
+    background-color: rgb(163, 131, 42);
+    border: rgb(87, 69, 22) 2px solid;
+    margin-top: 10px;
+}
+
+table {
+    margin-top: 5px;
+    margin-left: 430px;
+    background: rgba(255, 165, 0, 0.03);
+    border:#5c513b solid 2px;
+}
+
+.cell {
+    height: 55px;
+    width: 55px;
+    border: #4f534a solid 2px;
+    background: #6d7563;
+    color: rgb(15, 13, 2);
+    text-align: center;
+    font-size: 30px;
+    font-weight: 900;
+}
+
+.cell.shown {
+    border: #4f534a solid 2px;
+    background: rgba(109, 117, 99, 0.3);
+}
+
+/*
+.cell.marked {
     border: 1px rgb(5, 167, 59) solid;
     background-color: rgb(5, 167, 59);
 }
 
-.cell.shown.mine{
-    border: 1px red solid;
-    background-color: red;
+.cell.shown.mine {
+    border: 2px rgb(41, 27, 27) solid;
+    background: rgba(255, 165, 0, 0.3);
 }
 
-.cell.shown.exploded{
+.cell.shown.exploded {
     border: 5px black solid;
     background-color: rgb(248, 9, 9);
-}
-
-
+}*/
