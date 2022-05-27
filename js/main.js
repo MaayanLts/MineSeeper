@@ -11,41 +11,17 @@ var gLevel = {
     size: 4,
     mines: 2
 }
-
-var gMinesLocations
+var gMinesLocations = []
 var gIsGameOver
 var gIsVictory
 var gIsFirstClick
-
-function initGame() {
-    gBoard = []
-    gIsFirstClick = true
-    gIsGameOver = false
-    gIsVictory = false
-
-    //var elmLifePanel = document.querySelector('.lifePanel')
-    //elmLifePanel.style.width = gLevel.size*55 + gLevel.size*2.5 + 'px'
-
-    //var elmEmoji = document.querySelector('.emoji')
-    //elmEmoji.style.marginLeft = (80  + gLevel.size *11) + 'px'
-
-    createEmptyBoard()
-    renderBoard()
-}
+var gGameStart
 
 function changeGameLevel(boardSize, minesCount) {
     gLevel.size = boardSize
     gLevel.mines = minesCount
 
-    var solderImg = document.querySelector('.solder');
-    if (gLevel.size === BEGINNER_LEVEL) {
-        solderImg.src = '../img/solderBeginner.png'
-    } else if (gLevel.size === INTERMEDIATE_LEVEL) {
-        solderImg.src = '../img/solderInterm.png'
-    } else if (gLevel.size === EXPERT_LEVEL) {
-        solderImg.src = '../img/solderExpert.png'
-    }
-
+    setSoldierLevelImage()
     restartGame()
 }
 
@@ -56,6 +32,19 @@ function restartGame() {
 
     updateLifes()
     initGame()
+}
+
+function initGame() {
+    gBoard = []
+    gMinesLocations = []
+    gIsFirstClick = true
+    gIsGameOver = false
+    gIsVictory = false
+    gGameStart = new Date()
+
+    createEmptyBoard()
+    renderBoard()
+    startTimer()
 }
 
 function updateLifes() {
@@ -163,14 +152,7 @@ function checkVictory() {
     //Check if exists unmarked and uncover mines
     var isUncoverMinesExist = false
     for (var i = 0; i < gMinesLocations.length; i++) {
-        if (gMinesLocations[i] !== 1) {
-            continue;
-        }
-
-        var indxI = Math.floor(i / gBoard.length)
-        var indxJ = i % gBoard.length
-
-        var cell = gBoard[indxI][indxJ]
+        var cell = gBoard[gMinesLocations[i].i][gMinesLocations[i].j]
         isUncoverMinesExist = (cell.isMine && !cell.isExploded && !cell.isMarked && !cell.isShown)
         if (isUncoverMinesExist) {
             break
@@ -198,17 +180,6 @@ function uncoverNeighbours_Prev(i, j) {
     uncover(i + 1, j + 1);
 }
 
-// function uncover(i, j) {
-//     if (i < 0 || j < 0 || i > gBoard.length - 1 || j > gBoard.length - 1)
-//         return;
-
-//     if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
-//         return
-
-//     gBoard[i][j].isShown = true
-//     gBoard[i][j].isMarked = false
-// }
-
 function uncoverNeighbours(i, j) {
     if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
         return
@@ -233,15 +204,15 @@ function uncoverUp(i, j) {
     gBoard[i][j].isShown = true
     gBoard[i][j].isMarked = false
 
-    if (gBoard[i][j].minesAroundCount == 0){
+    if (gBoard[i][j].minesAroundCount == 0) {
         uncoverRight(i, j + 1)
         uncoverLeft(i, j - 1)
-        uncoverUp(i-1,j)
+        uncoverUp(i - 1, j)
     }
 }
 
 function uncoverDown(i, j) {
-    if (i > gBoard.length -1)
+    if (i > gBoard.length - 1)
         return;
 
     if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
@@ -250,10 +221,10 @@ function uncoverDown(i, j) {
     gBoard[i][j].isShown = true
     gBoard[i][j].isMarked = false
 
-    if (gBoard[i][j].minesAroundCount == 0){
+    if (gBoard[i][j].minesAroundCount == 0) {
         uncoverRight(i, j + 1)
         uncoverLeft(i, j - 1)
-        uncoverDown(i-1,j)
+        uncoverDown(i + 1, j)
     }
 }
 
@@ -315,4 +286,30 @@ function classesName(cell) {
     }
 
     return classes;
+}
+
+function startTimer() {
+    // Update the count down every 1 second
+    var x = setInterval(function () {
+        // Get today's date and times
+        var now = (new Date() - gGameStart) 
+        var minutes = Math.floor(now/60000)
+        var seconds = Math.floor(now/1000) - minutes*60
+
+        minutes = minutes < 10 ? '0'+minutes : minutes
+        seconds = seconds < 10 ? '0'+seconds : seconds
+
+        document.querySelector(".timer").innerHTML = `${minutes} : ${seconds}`
+    }, 1000);
+}
+
+function setSoldierLevelImage() {
+    var solderImg = document.querySelector('.solder');
+    if (gLevel.size === BEGINNER_LEVEL) {
+        solderImg.src = '../img/solderBeginner.png'
+    } else if (gLevel.size === INTERMEDIATE_LEVEL) {
+        solderImg.src = '../img/solderInterm.png'
+    } else if (gLevel.size === EXPERT_LEVEL) {
+        solderImg.src = '../img/solderExpert.png'
+    }
 }

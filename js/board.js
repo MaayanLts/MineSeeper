@@ -50,39 +50,29 @@ function countNeighbours(i, j) {
 
 function setMines(minesCount, openCellLocation) {
     //Create array of mines location
-    gMinesLocations = fillMinesLocation(minesCount, openCellLocation)
+    fillMinesLocation(minesCount, openCellLocation)
 
     for (var i = 0; i < gMinesLocations.length; i++) {
-        if (gMinesLocations[i] === 1) {
-            var indxI = Math.floor(i / gBoard.length)
-            var indxJ = i % gBoard.length
-
-            gBoard[indxI][indxJ].isMine = true
-        }
+        gBoard[gMinesLocations[i].i][gMinesLocations[i].j].isMine = true
     }
 }
 
 function fillMinesLocation(minesCount, openCellLocation) {
-    var minesLocations = [];
-    minesLocations.length = gLevel.size ** 2;
-    minesLocations.fill(0, 0, minesLocations.length) //Fill array with zero values
-    var mineNextIndx
-    var indxI
-    var indxJ
+    var emptyLocations = [];
+    emptyLocations.length = gLevel.size ** 2;
+    emptyLocations.fill(0, 0, emptyLocations.length) //Fill array with zero values
 
     while (minesCount > 0) {
         //Get next location for mine
-        mineNextIndx = getMineNextLocation(minesLocations);
-        indxI = Math.floor(mineNextIndx / gBoard.length)
-        indxJ = mineNextIndx % gBoard.length
+        var mineNextIndx = getMineNextLocation(emptyLocations);
+        var indxI = Math.floor(mineNextIndx / gBoard.length)
+        var indxJ = mineNextIndx % gBoard.length
 
         if (indxI !== openCellLocation.i && indxJ !== openCellLocation.j) {
-            minesLocations[mineNextIndx] = 1;
+            gMinesLocations.push({ i: indxI, j: indxJ })
             minesCount--
         }
     }
-
-    return minesLocations
 }
 
 function getMineNextLocation(minesLocations) {
