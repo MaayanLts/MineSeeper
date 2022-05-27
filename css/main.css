@@ -27,21 +27,16 @@ h3:hover{
     font-size: 30px;
 }
 
+/* .hintPanel{
+    display: flex;
+    margin-left: 90px;
+} */
+
 .hint{
    /* display: flex;
     position: fixed;*/
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-top: 18px;
-    background-color: grey;
-    border-color: black solid;
-    border-width: 8px;
-}
-
-.hint.inUse{
-    margin: 10px;
-    background-color: yellow;
+    width: 60px;
+    height: 60px;
 }
 
 .hint.used{
@@ -49,43 +44,50 @@ h3:hover{
     background-color: black;
 }
 
-.lifePanel{
+/* .lifePanel{
     position: absolute;
     display: flex;
-    margin-left: 430px;
+    margin-left: 418px;
     margin-top: -29px; /*????????*/
-    /*border:#353830 solid 2px;*/
+    /*border:#353830 solid 2px;
     width: 495px;
     height: 60px;
     position: relative;
-}
+} */
 
-.hintsPanel{
+/* .hintsPanel{
     display: grid;
-    margin-left: 370px;
-    margin-top: -250px;
-}
+} */
 
 .heart{
     width: 40px;
     height: 35px;
     margin-left: 5px;
-    margin-top: 12px;
 }
 
 .emoji{
     width: 50px;
     height: 50px;
-    margin-left: 80px;
-    margin-top: 5px;
+    margin-left: 50px;
+    margin-right: 50px;
     cursor: pointer;
 }
 
 .solderPanel{
     position:absolute;
     display: grid;
-    margin-left: 50px;
-    margin-top: 40px;
+    margin-left: 120px;
+    margin-top: 50px;
+}
+
+.buttonsPanel{
+    margin-left: 5px;
+    margin-top: 20px;
+    display: inline-flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
 .gameLevels{
@@ -97,7 +99,7 @@ h3:hover{
     height: 30px;
     background-color: rgb(163, 131, 42);
     border: rgb(87, 69, 22) 2px solid;
-    margin-top: 10px;
+    margin-left: 10px;
 }
 
 table {
@@ -116,25 +118,10 @@ table {
     text-align: center;
     font-size: 30px;
     font-weight: 900;
+    box-shadow: -4px 1px 5px 0px #ddd49d inset, 0 0 0 2px rgb(255 255 255 / 15%) inset, 0 4px 0 0 #60624c, 0 4px 0 1px rgb(0 0 0 / 40%), inset -3px -3px 4px 1px rgb(0 0 0 / 50%);
 }
 
 .cell.shown {
     border: #4f534a solid 2px;
     background: rgba(109, 117, 99, 0.3);
 }
-
-/*
-.cell.marked {
-    border: 1px rgb(5, 167, 59) solid;
-    background-color: rgb(5, 167, 59);
-}
-
-.cell.shown.mine {
-    border: 2px rgb(41, 27, 27) solid;
-    background: rgba(255, 165, 0, 0.3);
-}
-
-.cell.shown.exploded {
-    border: 5px black solid;
-    background-color: rgb(248, 9, 9);
-}*/

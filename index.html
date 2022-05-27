@@ -13,24 +13,36 @@
     <div class='background'>
         <div class='solderPanel'><img class='solder' src='img/solderBeginner.png' style='width: 200px;' /></div>
         <div class="buttonsPanel">
-            <button class = 'gameLevels' onclick="changeGameLevel(4,2)">Beginner</button>
-            <button class = 'gameLevels' onclick="changeGameLevel(8,12)">Intermediate</button>
-            <button class = 'gameLevels' onclick="changeGameLevel(12,30)">Expert</button>
+            <button class='gameLevels' onclick="changeGameLevel(4,2)">Beginner</button>
+            <button class='gameLevels' onclick="changeGameLevel(8,12)">Intermediate</button>
+            <button class='gameLevels' onclick="changeGameLevel(12,30)">Expert</button>
+            <div>
+                <td><img class="heart life" src='../img/heartLife.png' /></td>
+                <td><img class="heart life" src='../img/heartLife.png' /></td>
+                <td><img class="heart life" src='../img/heartLife.png' /></td>
+
+                <td><img class="emoji" emoji-level="0" src='../img/emjStartGame.png' onclick="restartGame()" /></td>
+
+                <td><img class="hint" src="../img/hintUnUsed.png" /></td>
+                <td><img class="hint" src="../img/hintUnUsed.png" /></td>
+                <td><img class="hint" src="../img/hintUnUsed.png" /></td>
+            </div>
         </div>
-        <div class="lifePanel">
+        <!-- <div class="lifePanel">
             <img class="heart life" src='../img/heartLife.png' />
             <img class="heart life" src='../img/heartLife.png' />
             <img class="heart life" src='../img/heartLife.png' />
             <img class="emoji" emoji-level="0" src='../img/emjStartGame.png' onclick="restartGame()" />
         </div>
+        <div class="hintPanel" >
+            <img class="hint" src="../img/hintUnUsed.png" />
+            <img class="hint" src="../img/hintUnUsed.png" />
+            <img class="hint" src="../img/hintUnUsed.png" />
+        </div> -->
         <table>
             <tbody class="minesField"></tbody>
         </table>
-        <div class="hintsPanel" style="display:none">
-            <button class="hint" onclick="hint()"></button>
-            <button class="hint" onclick="hint()"> </button>
-            <button class="hint" onclick="hint()"></button>
-        </div>
+
         <h3>© Copyright, Maayan Loutset</h3>
     </div>
     <script src="js/main.js"></script>

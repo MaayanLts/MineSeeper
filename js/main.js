@@ -23,10 +23,11 @@ function initGame() {
     gIsGameOver = false
     gIsVictory = false
 
-    var elmLifePanel = document.querySelector('.lifePanel')
-    elmLifePanel.style.width = gLevel.size*55 + gLevel.size*2.5 + 'px'
+    //var elmLifePanel = document.querySelector('.lifePanel')
+    //elmLifePanel.style.width = gLevel.size*55 + gLevel.size*2.5 + 'px'
 
-    var elmEmoji = document.querySelector('.emoji')
+    //var elmEmoji = document.querySelector('.emoji')
+    //elmEmoji.style.marginLeft = (80  + gLevel.size *11) + 'px'
 
     createEmptyBoard()
     renderBoard()
@@ -95,25 +96,25 @@ function renderBoard() {
 
 function cellClicked(event, i, j) {
     event.preventDefault()
-    var clickedCell = gBoard[i][j]
 
+    if (gIsFirstClick) {
+        mineField({ i, j })
+        gIsFirstClick = false
+    }
+
+    var clickedCell = gBoard[i][j]
     if (clickedCell.isShown || clickedCell.isExploded) {
         return
     }
 
     if (event.which === LEFT_CLICK) {
-        if (gIsFirstClick) {
-            mineField({ i, j })
-            gIsFirstClick = false
-        }
-
         clickedCell.isMarked = false
         clickedCell.isShown = true
 
         if (clickedCell.isMine) {
             checkGameOver(i, j)
         } else {
-            if(gBoard[i][j].minesAroundCount === 0){
+            if (gBoard[i][j].minesAroundCount === 0) {
                 uncoverNeighbours(i, j)
             }
         }
@@ -162,12 +163,16 @@ function checkVictory() {
     //Check if exists unmarked and uncover mines
     var isUncoverMinesExist = false
     for (var i = 0; i < gMinesLocations.length; i++) {
+        if (gMinesLocations[i] !== 1) {
+            continue;
+        }
+
         var indxI = Math.floor(i / gBoard.length)
         var indxJ = i % gBoard.length
 
         var cell = gBoard[indxI][indxJ]
         isUncoverMinesExist = (cell.isMine && !cell.isExploded && !cell.isMarked && !cell.isShown)
-        if (isUncoverMinesExist){
+        if (isUncoverMinesExist) {
             break
         }
     }
@@ -180,7 +185,7 @@ function checkVictory() {
     }
 }
 
-function uncoverNeighbours(i, j) {
+function uncoverNeighbours_Prev(i, j) {
     uncover(i - 1, j - 1);
     uncover(i - 1, j);
     uncover(i - 1, j + 1);
@@ -193,20 +198,33 @@ function uncoverNeighbours(i, j) {
     uncover(i + 1, j + 1);
 }
 
-function uncover(i, j) {
-    if (i < 0 || j < 0 || i > gBoard.length - 1 || j > gBoard.length - 1)
-        return;
+// function uncover(i, j) {
+//     if (i < 0 || j < 0 || i > gBoard.length - 1 || j > gBoard.length - 1)
+//         return;
 
+//     if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
+//         return
+
+//     gBoard[i][j].isShown = true
+//     gBoard[i][j].isMarked = false
+// }
+
+function uncoverNeighbours(i, j) {
     if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
         return
 
     gBoard[i][j].isShown = true
     gBoard[i][j].isMarked = false
+
+    uncoverRight(i, j + 1)
+    uncoverLeft(i, j - 1)
+
+    uncoverUp(i - 1, j)
+    uncoverDown(i + 1, j)
 }
 
-//input is i-1, j
-function uncoverNeighboursRec(i, j) {
-    if (i < 0 || j < 0 || i > gBoard.length - 1 || j > gBoard.length - 1)
+function uncoverUp(i, j) {
+    if (i < 0)
         return;
 
     if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
@@ -215,9 +233,56 @@ function uncoverNeighboursRec(i, j) {
     gBoard[i][j].isShown = true
     gBoard[i][j].isMarked = false
 
-    uncoverNeighbours(i, j - 1);
-    uncoverNeighbours(i, j);
-    uncoverNeighbours(i, j + 1);
+    if (gBoard[i][j].minesAroundCount == 0){
+        uncoverRight(i, j + 1)
+        uncoverLeft(i, j - 1)
+        uncoverUp(i-1,j)
+    }
+}
+
+function uncoverDown(i, j) {
+    if (i > gBoard.length -1)
+        return;
+
+    if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
+        return
+
+    gBoard[i][j].isShown = true
+    gBoard[i][j].isMarked = false
+
+    if (gBoard[i][j].minesAroundCount == 0){
+        uncoverRight(i, j + 1)
+        uncoverLeft(i, j - 1)
+        uncoverDown(i-1,j)
+    }
+}
+
+function uncoverRight(i, j) {
+    if (j > gBoard.length - 1)
+        return;
+
+    if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
+        return
+
+    gBoard[i][j].isShown = true
+    gBoard[i][j].isMarked = false
+
+    if (gBoard[i][j].minesAroundCount == 0)
+        uncoverRight(i, j + 1)
+}
+
+function uncoverLeft(i, j) {
+    if (j < 0)
+        return;
+
+    if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
+        return
+
+    gBoard[i][j].isShown = true
+    gBoard[i][j].isMarked = false
+
+    if (gBoard[i][j].minesAroundCount == 0)
+        uncoverLeft(i, j - 1)
 }
 
 function displayData(cell) {
