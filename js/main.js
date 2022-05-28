@@ -162,27 +162,9 @@ function checkVictory() {
         }
         
         explodeMinesCount += cell.isExploded ? 1 : 0
-        //isUnknownMinesExist = (!cell.isExploded || !cell.isMarked)
-        //if (isUnknownMinesExist) {
-        //    break
-        //}
-
-
-        //if (cell.isMine) {
-        //flagedMinesCount += cell.isMarked ? 1 : 0
-        //explodeMinesCount += cell.isExploded ? 1 : 0
-        //isUncoverMinesExist = (!cell.isExploded && !cell.isMarked && !cell.isShown)
-
-        // }
-        //if(!cell.isMarked)
-          //  isAllMinesMarked = false
     }
 
-    // var isAllMinesFlaged = (flagedMinesCount === gLevel.mines)
-    //gIsVictory = (!isUnknownMinesExist && !isExtraCellsFlaged())
-    //gVIctory = !(isUnknownMinesExist || )
-
-    gIsVictory = (isAllMinesDiscoverd && !isExtraCellsFlaged(explodeMinesCount)) || explodeMinesCount === gLevel.mines
+     gIsVictory = (isAllMinesDiscoverd && !isExtraCellsFlaged(explodeMinesCount)) || explodeMinesCount === gLevel.mines
 
     if (gIsVictory) {
         var elmEmoji = document.querySelector('.emoji')
