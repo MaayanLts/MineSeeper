@@ -23,10 +23,16 @@ var gFlagedCellsCount
 var gLevelBestScore
 
 function changeGameLevel(boardSize, minesCount) {
+    //Keep previous level score
+    setBestLevelScore()
+
+    //Change level
     gLevel.size = boardSize
     gLevel.mines = minesCount
 
+    //Update soldier image
     setSoldierLevelImage()
+
     restartGame()
 }
 
@@ -34,6 +40,9 @@ function restartGame() {
     var elmEmoji = document.querySelector('.emoji')
     elmEmoji.src = 'img/emjStartGame.png'
     elmEmoji.setAttribute('emoji-level', 0)
+
+    //Keep level score (Duplicate code, find beter solution)
+    setBestLevelScore()
 
     updateLifes()
     displayHints()
