@@ -20,6 +20,7 @@ var gGameStart
 var gIsHintClicked
 var gBoardStepsCount //for undo and hint
 var gFlagedCellsCount
+var gLevelBestScore
 
 function changeGameLevel(boardSize, minesCount) {
     gLevel.size = boardSize
@@ -49,11 +50,58 @@ function initGame() {
     gGameStart = new Date()
     gIsHintClicked = false
     gBoardStepsCount = 0
+    gLevelBestScore = 0
 
     createEmptyBoard()
     renderBoard()
 
     startTimer()
+    displayUncoverdMinesCountInLevel()
+    getBestLevelScore()
+}
+
+function getBestLevelScore() {
+    var tagName = getBestLevelTagName()
+    var bestScore = 0;
+
+    if (typeof (Storage) !== "undefined" && localStorage[tagName]) {
+        bestScore = localStorage.getItem(tagName)
+    }
+
+    var elmMines = document.querySelector('.bestScore.value')
+    elmMines.innerHTML = bestScore
+}
+
+function setBestLevelScore() {
+    var tagName = getBestLevelTagName()
+    var storageScore =  0
+
+    //Update session best score
+    if (typeof (Storage) !== "undefined") {
+        if (!localStorage[tagName]) {
+            localStorage.setItem(tagName, gLevelBestScore);
+        } else {
+            storageScore = localStorage.getItem(tagName)
+            if (gLevelBestScore > storageScore)
+                localStorage.setItem(tagName, gLevelBestScore);
+        }
+    }
+
+    var elmMines = document.querySelector('.bestScore.value')
+    elmMines.innerHTML = storageScore > gLevelBestScore ? storageScore : gLevelBestScore
+}
+
+function getBestLevelTagName() {
+    var levelBestScoreName = ''
+    if (gLevel.size === BEGINNER_LEVEL) {
+        levelBestScoreName = 'BEGINNER_LEVEL_BEST_SCORE'
+    } else if (gLevel.size === INTERMEDIATE_LEVEL) {
+        levelBestScoreName = 'INTERMEDIATE_LEVEL_BEST_SCORE'
+    } else if (gLevel.size === EXPERT_LEVEL) {
+        levelBestScoreName = 'EXPERT_LEVEL_BEST_SCORE'
+    }
+
+    return levelBestScoreName
 }
 
 function updateLifes() {
@@ -127,6 +175,7 @@ function cellClicked(event, i, j) {
                 }
             }
 
+            displayUncoverdMinesCountInLevel()
             checkVictory()
         }
     }
@@ -138,6 +187,8 @@ function cellClicked(event, i, j) {
 
         clickedCell.isMarked = !clickedCell.isMarked
         if (clickedCell.isMine) {
+
+            displayUncoverdMinesCountInLevel()
             checkVictory()
         }
     }
@@ -145,28 +196,39 @@ function cellClicked(event, i, j) {
     renderBoard()
 }
 
+function displayUncoverdMinesCountInLevel() {
+    var discoverdMinesCount = 0
+
+    for (var i = 0; i < gMinesLocations.length; i++) {
+        var cell = gBoard[gMinesLocations[i].i][gMinesLocations[i].j]
+        discoverdMinesCount += cell.isMarked ? 1 : 0
+    }
+
+    var elmMines = document.querySelector('.levelScore')
+    elmMines.innerHTML = gLevel.mines - discoverdMinesCount
+    gLevelBestScore = discoverdMinesCount
+}
+
 function checkVictory() {
     //Check if exists unmarked and uncover mines
-    //var isUnknownMinesExist = false
     var explodeMinesCount = 0
-    //var flagedMinesCount = 0
-    //var isAllMinesMarked = true
     var isAllMinesDiscoverd = true
 
     for (var i = 0; i < gMinesLocations.length; i++) {
         var cell = gBoard[gMinesLocations[i].i][gMinesLocations[i].j]
 
         var isCellDiscoverd = cell.isMarked || cell.isShown || cell.isExploded
-        if(isAllMinesDiscoverd && !isCellDiscoverd){
+        if (isAllMinesDiscoverd && !isCellDiscoverd) {
             isAllMinesDiscoverd = cell.isMarked || cell.isShown || cell.isExploded
         }
-        
+
         explodeMinesCount += cell.isExploded ? 1 : 0
     }
 
-     gIsVictory = (isAllMinesDiscoverd && !isExtraCellsFlaged(explodeMinesCount)) || explodeMinesCount === gLevel.mines
+    gIsVictory = (isAllMinesDiscoverd && !isExtraCellsFlaged(explodeMinesCount)) || explodeMinesCount === gLevel.mines
 
     if (gIsVictory) {
+        setBestLevelScore()
         var elmEmoji = document.querySelector('.emoji')
         elmEmoji.src = 'img/emjVictory.png'
         clearInterval(gTimerInterval)

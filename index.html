@@ -12,8 +12,15 @@
 <body onload="initGame()">
     <div class='background'>
         <div class='solderPanel'>
-            <div class="timer"></div>
             <img class='solder' src='img/solderBeginner.png' style='width: 200px;' />
+            <div class="scorePanel">
+                <div class="bestScore">Level best</div>
+                <div class="bestScore value"></div>
+            </div>
+            <div class="levelDataPanel">
+            <div class="timer"></div>
+            <div class="levelScore"></div>
+           </div>
         </div>
         <div class="buttonsPanel">
             <button class='gameLevels' onclick="changeGameLevel(4,2)">Beginner</button>
@@ -23,10 +30,11 @@
         <table class="mainTable">
             <tbody>
                 <tr>
-                    <td class = 'cell'>
-                        <img class="emoji" emoji-level="0" src='img/emjStartGame.png' onclick="restartGame()"  title = 'restart current level'/>
+                    <td class='cell'>
+                        <img class="emoji" emoji-level="0" src='img/emjStartGame.png' onclick="restartGame()"
+                            title='restart current level' />
                     </td>
-                    <td class = 'cellTitle'>
+                    <td class='cellTitle'>
                         <img class="heart life" src='img/heartLife.png' />
                         <img class="heart life" src='img/heartLife.png' />
                         <img class="heart life" src='img/heartLife.png' />
@@ -34,9 +42,9 @@
                 </tr>
                 <tr>
                     <td class="cell hint">
-                        <img class="hint" src="img/hint.png" title = 'click for hint' onclick="hintClicked(this)" />
-                        <img class="hint" src="img/hint.png" title = 'click for hint' onclick="hintClicked(this)" />
-                        <img class="hint" src="img/hint.png" title = 'click for hint' onclick="hintClicked(this)" />
+                        <img class="hint" src="img/hint.png" title='click for hint' onclick="hintClicked(this)" />
+                        <img class="hint" src="img/hint.png" title='click for hint' onclick="hintClicked(this)" />
+                        <img class="hint" src="img/hint.png" title='click for hint' onclick="hintClicked(this)" />
                     </td>
                     <td>
                         <table class="fieldTable">
