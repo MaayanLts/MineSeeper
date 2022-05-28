@@ -28,11 +28,11 @@ h3:hover{
 }
 
 .hint{
-    width: 55px;
-    height: 55px;
-    margin-left: -4px;
+    width: 40px;
+    height: 40px;
     cursor: pointer;
-    display:none;
+    padding-bottom: 10px;
+    display: revert;
 }
 
 .heart{
@@ -43,9 +43,10 @@ h3:hover{
 }
 
 .emoji{
-    width: 50px;
-    height: 50px; 
+    width: 45px;
+    height: 45px; 
     cursor: pointer;
+    padding-top: 5px;
 }
 
 .solderPanel{
@@ -89,28 +90,35 @@ h3:hover{
     background-color: rgb(163, 131, 42);
     border: rgb(87, 69, 22) 2px solid;
     margin-left: 10px;
+    cursor: pointer;
 }
 
 .mainTable{
-    margin-top: -32px;
+    margin-top: -32px; /*??????????????????????*/
     margin-left: 420px;
 }
 
 .fieldTable {
     background: rgba(255, 165, 0, 0.03);
-    border:#5c513b solid 2px;
 }
 
 .cell {
     height: 55px;
     width: 55px;
     border: #4f534a solid 2px;
-    background: #6d7563;
+    /* background: #6d7563; */
+    background: #6d7563; 
     color: rgb(15, 13, 2);
     text-align: center;
     font-size: 30px;
     font-weight: 900;
     box-shadow: -4px 1px 5px 0px #ddd49d inset, 0 0 0 2px rgb(255 255 255 / 15%) inset, 0 4px 0 0 #60624c, 0 4px 0 1px rgb(0 0 0 / 40%), inset -3px -3px 4px 1px rgb(0 0 0 / 50%);
+    cursor:pointer;
+}
+
+.cell.hint.ligth{
+    background: rgb(239 207 8 / 45%);
+    box-shadow: -20px 9px 14px 8px #d1c686, -1px 1px 0 2px rgb(255 255 255 / 15%), inset 1px -6px 15px 13px #60624c, 0 4px 0 1px rgb(0 0 0 / 40%), inset -3px -3px 4px 1px rgb(0 0 0 / 50%);
 }
 
 .cellTitle{

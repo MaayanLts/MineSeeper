@@ -14,8 +14,12 @@ var gLevel = {
 var gMinesLocations = []
 var gIsGameOver
 var gIsVictory
+var gTimerInterval
 var gIsFirstClick
 var gGameStart
+var gIsHintClicked
+var gBoardStepsCount //for undo and hint
+var gFlagedCellsCount
 
 function changeGameLevel(boardSize, minesCount) {
     gLevel.size = boardSize
@@ -31,6 +35,8 @@ function restartGame() {
     elmEmoji.setAttribute('emoji-level', 0)
 
     updateLifes()
+    displayHints()
+
     initGame()
 }
 
@@ -41,9 +47,12 @@ function initGame() {
     gIsGameOver = false
     gIsVictory = false
     gGameStart = new Date()
+    gIsHintClicked = false
+    gBoardStepsCount = 0
 
     createEmptyBoard()
     renderBoard()
+
     startTimer()
 }
 
@@ -97,15 +106,28 @@ function cellClicked(event, i, j) {
     }
 
     if (event.which === LEFT_CLICK) {
-        clickedCell.isMarked = false
-        clickedCell.isShown = true
+        if (gIsHintClicked) {
+            uncoverNeighboursWithHint(i, j);
+            hintUsed()
+            return
 
-        if (clickedCell.isMine) {
-            checkGameOver(i, j)
         } else {
-            if (gBoard[i][j].minesAroundCount === 0) {
-                uncoverNeighbours(i, j)
+            clickedCell.isMarked = false
+            clickedCell.isShown = true
+
+            if (clickedCell.isMine) {
+                gBoard[i][j].isExploded = true
+                var explosionSound = new Audio('sound/mineExplosion.wav')
+                explosionSound.play()
+
+                checkGameOver(i, j)
+            } else {
+                if (gBoard[i][j].minesAroundCount === 0) {
+                    uncoverNeighbours(i, j)
+                }
             }
+
+            checkVictory()
         }
     }
     else if (event.which === RIGHT_CLICK) {
@@ -115,145 +137,132 @@ function cellClicked(event, i, j) {
         }
 
         clickedCell.isMarked = !clickedCell.isMarked
-    }
-
-    checkVictory()
-    renderBoard()
-}
-
-function checkGameOver(i, j) {
-    gBoard[i][j].isExploded = true
-    var elmLife = document.querySelector('.heart.life')
-    var elmEmoji = document.querySelector('.emoji')
-
-    if (!elmLife) {
-        gIsGameOver = true
-        elmEmoji.src = 'img/emjGameOver.png'
-    } else {
-        elmLife.classList.remove('life')
-        elmLife.src = 'img/heartDead.png'
-
-        var emjLevel = + elmEmoji.getAttribute('emoji-level')
-        if (emjLevel === 0) {
-            elmEmoji.src = 'img/emjMistake1.png'
-            elmEmoji.setAttribute('emoji-level', 1)
-        } else if (emjLevel === 1) {
-            elmEmoji.src = 'img/emjMistake2.png'
-            elmEmoji.setAttribute('emoji-level', 2)
-        } else if (emjLevel === 2) {
-            elmEmoji.src = 'img/emjMistake3.png'
-            elmEmoji.setAttribute('emoji-level', 3)
+        if (clickedCell.isMine) {
+            checkVictory()
         }
     }
 
+    renderBoard()
 }
 
 function checkVictory() {
     //Check if exists unmarked and uncover mines
-    var isUncoverMinesExist = false
+    //var isUnknownMinesExist = false
+    var explodeMinesCount = 0
+    //var flagedMinesCount = 0
+    //var isAllMinesMarked = true
+    var isAllMinesDiscoverd = true
+
     for (var i = 0; i < gMinesLocations.length; i++) {
         var cell = gBoard[gMinesLocations[i].i][gMinesLocations[i].j]
-        isUncoverMinesExist = (cell.isMine && !cell.isExploded && !cell.isMarked && !cell.isShown)
-        if (isUncoverMinesExist) {
-            break
+
+        var isCellDiscoverd = cell.isMarked || cell.isShown || cell.isExploded
+        if(isAllMinesDiscoverd && !isCellDiscoverd){
+            isAllMinesDiscoverd = cell.isMarked || cell.isShown || cell.isExploded
         }
+        
+        explodeMinesCount += cell.isExploded ? 1 : 0
+        //isUnknownMinesExist = (!cell.isExploded || !cell.isMarked)
+        //if (isUnknownMinesExist) {
+        //    break
+        //}
+
+
+        //if (cell.isMine) {
+        //flagedMinesCount += cell.isMarked ? 1 : 0
+        //explodeMinesCount += cell.isExploded ? 1 : 0
+        //isUncoverMinesExist = (!cell.isExploded && !cell.isMarked && !cell.isShown)
+
+        // }
+        //if(!cell.isMarked)
+          //  isAllMinesMarked = false
     }
 
-    gIsVictory = !isUncoverMinesExist
+    // var isAllMinesFlaged = (flagedMinesCount === gLevel.mines)
+    //gIsVictory = (!isUnknownMinesExist && !isExtraCellsFlaged())
+    //gVIctory = !(isUnknownMinesExist || )
+
+    gIsVictory = (isAllMinesDiscoverd && !isExtraCellsFlaged(explodeMinesCount)) || explodeMinesCount === gLevel.mines
 
     if (gIsVictory) {
         var elmEmoji = document.querySelector('.emoji')
         elmEmoji.src = 'img/emjVictory.png'
+        clearInterval(gTimerInterval)
+
+        gVictorySound.play()
     }
 }
 
-function uncoverNeighbours_Prev(i, j) {
-    uncover(i - 1, j - 1);
-    uncover(i - 1, j);
-    uncover(i - 1, j + 1);
+function isExtraCellsFlaged(explodeMinesCount) {
+    var count = 0
 
-    uncover(i, j - 1);
-    uncover(i, j + 1);
+    //Check if board has more flagged cells then mines or unexplode mines
+    for (var i = 0; i < gLevel.size; i++) {
+        for (var j = 0; j < gLevel.size; j++) {
+            count += gBoard[i][j].isMarked ? 1 : 0
+            if (count > gLevel.mines - explodeMinesCount)
+                return true
+        }
+    }
 
-    uncover(i + 1, j - 1);
-    uncover(i + 1, j);
-    uncover(i + 1, j + 1);
+    return false
 }
 
-function uncoverNeighbours(i, j) {
-    if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
-        return
+function uncoverNeighboursWithHint(i, j) {
+    //keep previous border state
+    var borderStep = `borderHintStep_ ${gBoardStepsCount}`
+    if (typeof (Storage) !== "undefined") {
+        if (!sessionStorage[borderStep]) {
+            sessionStorage.setItem(borderStep, JSON.stringify(gBoard));
+        }
 
-    gBoard[i][j].isShown = true
-    gBoard[i][j].isMarked = false
+        uncoverCellAndCloseNeighbours(i, j)
+        renderBoard()
 
-    uncoverRight(i, j + 1)
-    uncoverLeft(i, j - 1)
-
-    uncoverUp(i - 1, j)
-    uncoverDown(i + 1, j)
-}
-
-function uncoverUp(i, j) {
-    if (i < 0)
-        return;
-
-    if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
-        return
-
-    gBoard[i][j].isShown = true
-    gBoard[i][j].isMarked = false
-
-    if (gBoard[i][j].minesAroundCount == 0) {
-        uncoverRight(i, j + 1)
-        uncoverLeft(i, j - 1)
-        uncoverUp(i - 1, j)
+        setTimeout(
+            function () {
+                gBoard = JSON.parse(sessionStorage.getItem(borderStep) || "[]");
+                sessionStorage.removeItem(borderStep)
+                renderBoard()
+            }, 500)
     }
 }
 
-function uncoverDown(i, j) {
-    if (i > gBoard.length - 1)
-        return;
+function checkGameOver(i, j) {
+    var elmLife = document.querySelector('.heart.life')
 
-    if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
-        return
+    //Check if gamer hs extra life
+    if (!elmLife) {
+        gIsGameOver = true
+        var elmEmoji = document.querySelector('.emoji')
+        elmEmoji.src = 'img/emjGameOver.png'
+        clearInterval(gTimerInterval)
 
-    gBoard[i][j].isShown = true
-    gBoard[i][j].isMarked = false
+        gGameOverSound.play()
+        gGameOverDemonSound.play()
 
-    if (gBoard[i][j].minesAroundCount == 0) {
-        uncoverRight(i, j + 1)
-        uncoverLeft(i, j - 1)
-        uncoverDown(i + 1, j)
+    } else {
+        elmLife.classList.remove('life')
+        elmLife.src = 'img/heartDead.png'
+
+        setDisappointedEmoji()
     }
 }
 
-function uncoverRight(i, j) {
-    if (j > gBoard.length - 1)
-        return;
+function setDisappointedEmoji() {
+    var elmEmoji = document.querySelector('.emoji')
+    var emjLevel = + elmEmoji.getAttribute('emoji-level')
 
-    if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
-        return
-
-    gBoard[i][j].isShown = true
-    gBoard[i][j].isMarked = false
-
-    if (gBoard[i][j].minesAroundCount == 0)
-        uncoverRight(i, j + 1)
-}
-
-function uncoverLeft(i, j) {
-    if (j < 0)
-        return;
-
-    if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
-        return
-
-    gBoard[i][j].isShown = true
-    gBoard[i][j].isMarked = false
-
-    if (gBoard[i][j].minesAroundCount == 0)
-        uncoverLeft(i, j - 1)
+    if (emjLevel === 0) {
+        elmEmoji.src = 'img/emjMistake1.png'
+        elmEmoji.setAttribute('emoji-level', 1)
+    } else if (emjLevel === 1) {
+        elmEmoji.src = 'img/emjMistake2.png'
+        elmEmoji.setAttribute('emoji-level', 2)
+    } else if (emjLevel === 2) {
+        elmEmoji.src = 'img/emjMistake3.png'
+        elmEmoji.setAttribute('emoji-level', 3)
+    }
 }
 
 function displayData(cell) {
@@ -289,27 +298,27 @@ function classesName(cell) {
 }
 
 function startTimer() {
-    // Update the count down every 1 second
-    var x = setInterval(function () {
+    gTimerInterval = setInterval(function () {
         // Get today's date and times
-        var now = (new Date() - gGameStart) 
-        var minutes = Math.floor(now/60000)
-        var seconds = Math.floor(now/1000) - minutes*60
+        var now = (new Date() - gGameStart)
+        var minutes = Math.floor(now / 60000)
+        var seconds = Math.floor(now / 1000) - minutes * 60
 
-        minutes = minutes < 10 ? '0'+minutes : minutes
-        seconds = seconds < 10 ? '0'+seconds : seconds
+        minutes = minutes < 10 ? '0' + minutes : minutes
+        seconds = seconds < 10 ? '0' + seconds : seconds
 
         document.querySelector(".timer").innerHTML = `${minutes} : ${seconds}`
-    }, 1000);
+    }, 500);
 }
 
 function setSoldierLevelImage() {
     var solderImg = document.querySelector('.solder');
     if (gLevel.size === BEGINNER_LEVEL) {
-        solderImg.src = '../img/solderBeginner.png'
+        solderImg.src = 'img/solderBeginner.png'
     } else if (gLevel.size === INTERMEDIATE_LEVEL) {
-        solderImg.src = '../img/solderInterm.png'
+        solderImg.src = 'img/solderInterm.png'
     } else if (gLevel.size === EXPERT_LEVEL) {
-        solderImg.src = '../img/solderExpert.png'
+        solderImg.src = 'img/solderExpert.png'
     }
 }
+

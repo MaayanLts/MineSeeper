@@ -24,24 +24,45 @@ function updateNeighboursMinesCount() {
     }
 }
 
+function uncoverCellAndCloseNeighbours(i,j){
+    uncoverCell(i - 1, j - 1)
+    uncoverCell(i - 1, j)
+    uncoverCell(i - 1, j + 1)
+
+    uncoverCell(i, j - 1)
+    uncoverCell(i, j)
+    uncoverCell(i, j + 1)
+
+    uncoverCell(i + 1, j - 1)
+    uncoverCell(i + 1, j)
+    uncoverCell(i + 1, j + 1)
+}
+
+function uncoverCell(i, j) {
+    if (i < 0 || j < 0 || i > gBoard.length - 1 || j > gBoard.length - 1)
+        return 0;
+
+    gBoard[i][j].isShown = true
+}
+
 function minesAroundCount(i, j) {
     var count = 0
 
-    count += countNeighbours(i - 1, j - 1);
-    count += countNeighbours(i - 1, j);
-    count += countNeighbours(i - 1, j + 1);
+    count += cellMineCount(i - 1, j - 1)
+    count += cellMineCount(i - 1, j)
+    count += cellMineCount(i - 1, j + 1)
 
-    count += countNeighbours(i, j - 1);
-    count += countNeighbours(i, j + 1);
+    count += cellMineCount(i, j - 1)
+    count += cellMineCount(i, j + 1)
 
-    count += countNeighbours(i + 1, j - 1);
-    count += countNeighbours(i + 1, j);
-    count += countNeighbours(i + 1, j + 1);
+    count += cellMineCount(i + 1, j - 1)
+    count += cellMineCount(i + 1, j)
+    count += cellMineCount(i + 1, j + 1)
 
     return count;
 }
 
-function countNeighbours(i, j) {
+function cellMineCount(i, j) {
     if (i < 0 || j < 0 || i > gBoard.length - 1 || j > gBoard.length - 1)
         return 0;
 
@@ -52,23 +73,28 @@ function setMines(minesCount, openCellLocation) {
     //Create array of mines location
     fillMinesLocation(minesCount, openCellLocation)
 
+    //Update main board with mines
     for (var i = 0; i < gMinesLocations.length; i++) {
         gBoard[gMinesLocations[i].i][gMinesLocations[i].j].isMine = true
     }
 }
 
 function fillMinesLocation(minesCount, openCellLocation) {
-    var emptyLocations = [];
-    emptyLocations.length = gLevel.size ** 2;
-    emptyLocations.fill(0, 0, emptyLocations.length) //Fill array with zero values
+    var minesLocations = [];
+    minesLocations.length = gLevel.size ** 2;
+    minesLocations.fill(0, 0, minesLocations.length) //Fill array with zero values
 
     while (minesCount > 0) {
         //Get next location for mine
-        var mineNextIndx = getMineNextLocation(emptyLocations);
+        var mineNextIndx = getMineNextLocation(minesLocations)
+
+        //Conver 1D array location to the 2D array location
         var indxI = Math.floor(mineNextIndx / gBoard.length)
         var indxJ = mineNextIndx % gBoard.length
 
+        //Check if mine index is not as clicked cell index
         if (indxI !== openCellLocation.i && indxJ !== openCellLocation.j) {
+            minesLocations[mineNextIndx] = 1
             gMinesLocations.push({ i: indxI, j: indxJ })
             minesCount--
         }
@@ -98,5 +124,82 @@ function createEmptyBoard() {
         }
     }
 }
+
+function uncoverNeighbours(i, j) {
+    if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
+        return
+
+    gBoard[i][j].isShown = true
+    gBoard[i][j].isMarked = false
+
+    uncoverRight(i, j + 1)
+    uncoverLeft(i, j - 1)
+
+    uncoverUp(i - 1, j)
+    uncoverDown(i + 1, j)
+}
+
+function uncoverUp(i, j) {
+    if (i < 0)
+        return;
+
+    if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
+        return
+
+    gBoard[i][j].isShown = true
+    gBoard[i][j].isMarked = false
+
+    if (gBoard[i][j].minesAroundCount == 0) {
+        uncoverRight(i, j + 1)
+        uncoverLeft(i, j - 1)
+        uncoverUp(i - 1, j)
+    }
+}
+
+function uncoverDown(i, j) {
+    if (i > gBoard.length - 1)
+        return;
+
+    if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
+        return
+
+    gBoard[i][j].isShown = true
+    gBoard[i][j].isMarked = false
+
+    if (gBoard[i][j].minesAroundCount == 0) {
+        uncoverRight(i, j + 1)
+        uncoverLeft(i, j - 1)
+        uncoverDown(i + 1, j)
+    }
+}
+
+function uncoverRight(i, j) {
+    if (j > gBoard.length - 1)
+        return;
+
+    if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
+        return
+
+    gBoard[i][j].isShown = true
+    gBoard[i][j].isMarked = false
+
+    if (gBoard[i][j].minesAroundCount == 0)
+        uncoverRight(i, j + 1)
+}
+
+function uncoverLeft(i, j) {
+    if (j < 0)
+        return;
+
+    if (gBoard[i][j].isMarked || gBoard[i][j].isMine)
+        return
+
+    gBoard[i][j].isShown = true
+    gBoard[i][j].isMarked = false
+
+    if (gBoard[i][j].minesAroundCount == 0)
+        uncoverLeft(i, j - 1)
+}
+
 
 
